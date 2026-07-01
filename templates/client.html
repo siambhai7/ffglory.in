@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - GloryBot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body class="dashboard-body">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="dash-nav">
+        <div class="dash-nav-inner">
+            <a href="/" class="dash-logo">
+                <div class="logo-mark">⚡</div>
+                <span>GloryBot</span>
+            </a>
+            <div class="dash-nav-right">
+                <div class="dash-user-pill">
+                    <div class="dash-user-avatar">{{ user['username'][0]|upper }}</div>
+                    <span class="dash-user-name">{{ user['username'] }}</span>
+                </div>
+                <a href="/logout" class="dash-logout-btn" title="Logout">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== MAIN DASHBOARD ===== -->
+    <main class="dash-main">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="toast toast-{{ category }}" id="toast-{{ loop.index }}">
+                <div class="toast-icon">
+                    {% if category == 'success' %}✓
+                    {% elif category == 'error' %}✕
+                    {% elif category == 'warning' %}⚠
+                    {% else %}ℹ{% endif %}
+                </div>
+                <span>{{ message }}</span>
+                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+            </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- Hero Panel -->
+        <div class="dash-hero">
+            <div class="dash-hero-glow"></div>
+            <div class="dash-hero-content">
+                <div class="dash-hero-badge">
+                    <span class="live-dot"></span>
+                    System Online
+                </div>
+                <h1>Clan Glory <span class="gradient-text">Automation</span></h1>
+                <p>Select your region and enter your Clan ID to start the glory farming session.</p>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="control-panel-glow"></div>
+            <div class="control-panel-inner">
+                <div class="panel-header">
+                    <div class="panel-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    </div>
+                    <div>
+                        <h2>Start Session</h2>
+                        <p class="panel-subtitle">Configure and launch your glory bot</p>
+                    </div>
+                </div>
+
+                <form id="sessionForm" class="session-form" autocomplete="off">
+                    <!-- Region Select -->
+                    <div class="field-group">
+                        <label for="region">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                            Region
+                        </label>
+                        <div class="select-wrapper">
+                            <select id="region" name="region" required>
+                                <option value="" disabled selected>Select your region</option>
+                                {% for code, name in all_regions.items() %}
+                                {% if code in allowed_regions %}
+                                <option value="{{ code }}">{{ name }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                            <div class="select-arrow">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Clan ID Input -->
+                    <div class="field-group">
+                        <label for="clanId">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            Clan ID
+                        </label>
+                        <input type="text" id="clanId" name="clan_id" placeholder="Enter your Free Fire Clan ID" required>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="launch-btn" id="launchBtn">
+                        <span class="launch-btn-content">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            Launch Glory Session
+                        </span>
+                        <span class="launch-btn-loading" style="display:none;">
+                            <div class="spinner"></div>
+                            Starting...
+                        </span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ===== FULLSCREEN LOADING OVERLAY ===== -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-content">
+                <div class="loading-spinner-ring">
+                    <div class="ring"></div>
+                    <div class="ring"></div>
+                    <div class="ring"></div>
+                </div>
+                <div class="loading-text">
+                    <h3>Fetching Clan Data</h3>
+                    <p id="loadingStatus">Connecting to server...</p>
+                </div>
+                <div class="loading-progress">
+                    <div class="loading-progress-bar" id="loadingBar"></div>
+                </div>
+                <div class="loading-steps">
+                    <div class="step active" id="step1">
+                        <div class="step-dot"></div>
+                        <span>Connecting</span>
+                    </div>
+                    <div class="step" id="step2">
+                        <div class="step-dot"></div>
+                        <span>Authenticating</span>
+                    </div>
+                    <div class="step" id="step3">
+                        <div class="step-dot"></div>
+                        <span>Fetching Data</span>
+                    </div>
+                    <div class="step" id="step4">
+                        <div class="step-dot"></div>
+                        <span>Processing</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Last 5 Orders Status -->
+        <div class="sessions-panel">
+            <div class="sessions-header">
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    Last 5 Orders
+                </h3>
+                <span class="sessions-count" id="sessionsCount">{{ orders|length }} orders</span>
+            </div>
+            <div class="sessions-list" id="sessionsList">
+                {% if orders|length > 0 %}
+                    {% for o in orders %}
+                    <div class="session-item">
+                        <div class="session-left">
+                            <div class="session-region-badge">{{ region_display(o['region']) }}</div>
+                            <div class="session-clan-id">{{ o['clan_name'] or o['clan_id'] }}</div>
+                        </div>
+                        <div class="session-right">
+                            <div class="session-glory">₨ {{ o['amount'] }}</div>
+                            <div class="session-status status-{{ o['status'] }}">
+                                {% if o['status'] == 'pending' %}⏳ Pending
+                                {% elif o['status'] == 'confirmed' %}✓ Confirmed
+                                {% elif o['status'] == 'cancelled' %}✕ Cancelled
+                                {% else %}{{ o['status']|capitalize }}{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="sessions-empty">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.2;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                        <p>No orders yet</p>
+                        <span>Launch a session and make your first order</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+    // ===== GUILD INFO CHECK SETTING =====
+    const GUILD_INFO_ENABLED = {{ 'true' if guild_info_enabled == 'on' else 'false' }};
+
+    // ===== SESSION FORM - CALL API =====
+    document.getElementById('sessionForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const clanId = document.getElementById('clanId').value.trim();
+        const region = document.getElementById('region').value;
+
+        if (!region) {
+            showToast('Please select a region', 'error');
+            return;
+        }
+        if (!clanId) {
+            showToast('Please enter your Clan ID', 'error');
+            return;
+        }
+
+        // If guild info check is OFF, skip API and go directly to payment
+        if (!GUILD_INFO_ENABLED) {
+            showLoading();
+            // Short loading animation then redirect to payment
+            const bar = document.getElementById('loadingBar');
+            const status = document.getElementById('loadingStatus');
+            bar.style.width = '30%';
+            status.textContent = 'Preparing your order...';
+            activateStep(2);
+            setTimeout(() => { bar.style.width = '70%'; status.textContent = 'Redirecting to payment...'; activateStep(3); }, 500);
+            setTimeout(() => {
+                bar.style.width = '100%';
+                status.textContent = 'Complete!';
+                activateStep(4);
+                document.querySelectorAll('.step').forEach(s => s.classList.add('done'));
+                setTimeout(() => {
+                    const clanName = '';
+                    window.location.href = '/payment?clan_id=' + encodeURIComponent(clanId) + '&region=' + encodeURIComponent(region) + '&clan_name=' + encodeURIComponent(clanName);
+                }, 400);
+            }, 1000);
+            return;
+        }
+
+        // Show loading overlay
+        showLoading();
+
+        try {
+            const res = await fetch('/api/clan-info', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ clan_id: clanId, region: region })
+            });
+            const result = await res.json();
+
+            if (result.success && result.data && result.data.status === 'success') {
+                // Save clan data to sessionStorage for result page
+                sessionStorage.setItem('clanData', JSON.stringify(result.data));
+                
+                // Complete loading animation
+                completeLoading(() => {
+                    window.location.href = '/result';
+                });
+            } else {
+                hideLoading();
+                const msg = (result.data && result.data.message) || result.message || 'Failed to fetch clan info. Please try again.';
+                showToast(msg, 'error');
+            }
+        } catch(err) {
+            hideLoading();
+            showToast('Connection error. Please try again.', 'error');
+        }
+    });
+
+    // ===== LOADING OVERLAY =====
+    function showLoading() {
+        const overlay = document.getElementById('loadingOverlay');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        const bar = document.getElementById('loadingBar');
+        const status = document.getElementById('loadingStatus');
+        
+        // Animate progress bar
+        bar.style.width = '0%';
+        status.textContent = 'Connecting to server...';
+
+        setTimeout(() => { bar.style.width = '25%'; status.textContent = 'Authenticating request...'; activateStep(2); }, 600);
+        setTimeout(() => { bar.style.width = '55%'; status.textContent = 'Fetching clan data...'; activateStep(3); }, 1400);
+        setTimeout(() => { bar.style.width = '80%'; status.textContent = 'Processing response...'; activateStep(4); }, 2200);
+    }
+
+    function activateStep(num) {
+        const step = document.getElementById('step' + num);
+        if (step) step.classList.add('active');
+    }
+
+    function completeLoading(callback) {
+        const bar = document.getElementById('loadingBar');
+        const status = document.getElementById('loadingStatus');
+        bar.style.width = '100%';
+        status.textContent = 'Complete! Redirecting...';
+
+        // Mark all steps done
+        document.querySelectorAll('.step').forEach(s => s.classList.add('done'));
+
+        setTimeout(callback, 800);
+    }
+
+    function hideLoading() {
+        const overlay = document.getElementById('loadingOverlay');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+        
+        // Reset steps
+        document.querySelectorAll('.step').forEach(s => {
+            s.classList.remove('active', 'done');
+        });
+        document.getElementById('step1').classList.add('active');
+    }
+
+    // ===== TOAST NOTIFICATIONS =====
+    function showToast(message, type) {
+        const iconMap = { success: '✓', error: '✕', warning: '⚠', info: 'ℹ' };
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.innerHTML = `
+            <div class="toast-icon">${iconMap[type] || 'ℹ'}</div>
+            <span>${message}</span>
+            <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+        `;
+        const main = document.querySelector('.dash-main');
+        main.insertBefore(toast, main.firstChild);
+        setTimeout(() => { if (toast.parentElement) toast.remove(); }, 5000);
+    }
+
+    // ===== AUTO-REMOVE FLASH MESSAGES =====
+    document.querySelectorAll('.toast').forEach(t => {
+        setTimeout(() => { if (t.parentElement) t.remove(); }, 5000);
+    });
+    </script>
+</body>
+</html>

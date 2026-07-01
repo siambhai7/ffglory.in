@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You - GloryBot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body class="dashboard-body">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="dash-nav">
+        <div class="dash-nav-inner">
+            <a href="/" class="dash-logo">
+                <div class="logo-mark">⚡</div>
+                <span>GloryBot</span>
+            </a>
+            <div class="dash-nav-right">
+                <div class="dash-user-pill">
+                    <div class="dash-user-avatar">{{ user['username'][0]|upper }}</div>
+                    <span class="dash-user-name">{{ user['username'] }}</span>
+                </div>
+                <a href="/logout" class="dash-logout-btn" title="Logout">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== THANK YOU PAGE ===== -->
+    <main class="dash-main">
+        <div class="thankyou-container">
+            <div class="thankyou-card animate-in">
+                <!-- Success Animation -->
+                <div class="thankyou-icon-wrapper">
+                    <div class="thankyou-icon-circle">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="thankyou-confetti"></div>
+                </div>
+
+                <h1 class="thankyou-title">Thank You!</h1>
+                <p class="thankyou-message">Your order has been submitted successfully. We will verify your payment and process your order shortly.</p>
+
+                {% if order %}
+                <div class="thankyou-order-info">
+                    <div class="thankyou-order-row">
+                        <span>Order ID</span>
+                        <span class="thankyou-order-value">#{{ order['id'] }}</span>
+                    </div>
+                    <div class="thankyou-order-row">
+                        <span>Clan</span>
+                        <span class="thankyou-order-value">{{ order['clan_name'] or order['clan_id'] }}</span>
+                    </div>
+                    <div class="thankyou-order-row">
+                        <span>Region</span>
+                        <span class="thankyou-order-value">{{ region_display(order['region']) }}</span>
+                    </div>
+                    <div class="thankyou-order-row">
+                        <span>Amount</span>
+                        <span class="thankyou-order-value">650 RS/PKR</span>
+                    </div>
+                    <div class="thankyou-order-row">
+                        <span>Status</span>
+                        <span class="status-badge status-pending">Pending</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="thankyou-actions">
+                    <a href="/order-status" class="pay-btn pay-btn-status">
+                        <span class="pay-btn-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </span>
+                        <span class="pay-btn-text">View Order Status</span>
+                    </a>
+                    <a href="/client" class="thankyou-secondary-btn">
+                        ← Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

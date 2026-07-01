@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: guild-glory
+    runtime: python
+    buildCommand: chmod +x build.sh && ./build.sh
+    startCommand: gunicorn app:app --workers 2 --timeout 120 --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_PATH
+        value: /tmp/glorybot.db
+      - key: PORT
+        value: "10000"

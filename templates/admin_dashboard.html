@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - GloryBot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body class="dashboard-body admin-body">
+
+    <!-- Top Nav -->
+    <nav class="dash-nav">
+        <div class="dash-nav-inner">
+            <a href="/admin" class="dash-logo">
+                <div class="logo-mark">⚡</div>
+                <span>GloryBot Admin</span>
+            </a>
+            <div class="dash-nav-right">
+                <span class="admin-badge-nav">ADMIN</span>
+                <a href="/admin/logout" class="dash-logout-btn" title="Logout">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="dash-main dash-main-wide admin-main">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="toast toast-{{ category }}" style="animation:fadeInUp 0.4s ease;">
+            <span>{{ message }}</span>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- Desktop Tab Navigation (hidden on mobile) -->
+        <div class="admin-desktop-tabs" id="desktopTabs">
+            <button class="admin-desktop-tab active" onclick="switchTab('home')" id="dtab-home">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Home
+            </button>
+            <button class="admin-desktop-tab" onclick="switchTab('orders')" id="dtab-orders">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                Orders
+            </button>
+            <button class="admin-desktop-tab" onclick="switchTab('settings')" id="dtab-settings">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                Settings
+            </button>
+        </div>
+
+        <!-- ===== TAB: HOME ===== -->
+        <div class="admin-tab-content" id="tab-home">
+            <!-- Stats Cards -->
+            <div class="admin-stats">
+                <div class="admin-stat-card" style="--accent:#7c3aed;">
+                    <div class="admin-stat-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <div class="admin-stat-info">
+                        <div class="admin-stat-value">{{ stats.total_users }}</div>
+                        <div class="admin-stat-label">Total Users</div>
+                    </div>
+                </div>
+                <div class="admin-stat-card" style="--accent:#ef4444;">
+                    <div class="admin-stat-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                    </div>
+                    <div class="admin-stat-info">
+                        <div class="admin-stat-value">{{ stats.banned_users }}</div>
+                        <div class="admin-stat-label">Banned Users</div>
+                    </div>
+                </div>
+                <div class="admin-stat-card" style="--accent:#2563eb;">
+                    <div class="admin-stat-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    </div>
+                    <div class="admin-stat-info">
+                        <div class="admin-stat-value">{{ stats.total_orders }}</div>
+                        <div class="admin-stat-label">Total Orders</div>
+                    </div>
+                </div>
+                <div class="admin-stat-card" style="--accent:#f59e0b;">
+                    <div class="admin-stat-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    </div>
+                    <div class="admin-stat-info">
+                        <div class="admin-stat-value">{{ stats.pending_orders }}</div>
+                        <div class="admin-stat-label">Pending Orders</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users List -->
+            <div class="admin-table-card">
+                <div class="admin-table-header">
+                    <h3>👥 All Users</h3>
+                </div>
+                {% if users %}
+                <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Joined</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for u in users %}
+                            <tr>
+                                <td class="td-mono">#{{ u['id'] }}</td>
+                                <td>{{ u['username'] }}</td>
+                                <td>{{ u['email'] }}</td>
+                                <td>
+                                    {% if u['banned'] %}
+                                    <span class="status-badge status-banned">Banned</span>
+                                    {% else %}
+                                    <span class="status-badge status-active">Active</span>
+                                    {% endif %}
+                                </td>
+                                <td class="td-date">{{ u['created_at'][:16] }}</td>
+                                <td class="td-actions">
+                                    {% if u['banned'] %}
+                                    <a href="/admin/unban/{{ u['id'] }}" class="admin-action-btn btn-confirm" onclick="return confirm('Unban user {{ u['username'] }}?')">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                        Unban
+                                    </a>
+                                    {% else %}
+                                    <a href="/admin/ban/{{ u['id'] }}" class="admin-action-btn btn-cancel" onclick="return confirm('Ban user {{ u['username'] }}?')">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                                        Ban
+                                    </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="orders-empty"><p>No users found.</p></div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ===== TAB: ORDERS ===== -->
+        <div class="admin-tab-content" id="tab-orders" style="display:none;">
+            <div class="admin-table-card">
+                <div class="admin-table-header">
+                    <h3>📋 All Orders</h3>
+                </div>
+                {% if orders %}
+                <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Clan Name</th>
+                                <th>Clan ID</th>
+                                <th>Region</th>
+                                <th>Transaction ID</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td class="td-mono">#{{ order['id'] }}</td>
+                                <td>{{ order['username'] }}</td>
+                                <td>{{ order['clan_name'] or '—' }}</td>
+                                <td class="td-mono">{{ order['clan_id'] }}</td>
+                                <td>{{ region_display(order['region']) }}</td>
+                                <td class="td-mono">{{ order['transaction_id'] }}</td>
+                                <td>{{ order['amount'] }} RS</td>
+                                <td><span class="status-badge status-{{ order['status'] }}">{{ order['status']|capitalize }}</span></td>
+                                <td class="td-date">{{ order['created_at'][:16] }}</td>
+                                <td class="td-actions">
+                                    {% if order['status'] == 'pending' %}
+                                    <a href="/admin/order/{{ order['id'] }}/confirmed" class="admin-action-btn btn-confirm" onclick="return confirm('Confirm order #{{ order['id'] }}?')">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                        Confirm
+                                    </a>
+                                    <a href="/admin/order/{{ order['id'] }}/cancelled" class="admin-action-btn btn-cancel" onclick="return confirm('Cancel order #{{ order['id'] }}?')">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                        Cancel
+                                    </a>
+                                    {% else %}
+                                    <span class="admin-no-action">—</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="orders-empty"><p>No orders found.</p></div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ===== TAB: SETTINGS ===== -->
+        <div class="admin-tab-content" id="tab-settings" style="display:none;">
+            <div class="admin-table-card">
+                <div class="admin-table-header">
+                    <h3>⚙️ Settings</h3>
+                    <span style="font-size:0.75rem;color:var(--text-gray,#94a3b8);background:rgba(124,58,237,0.1);padding:0.3rem 0.6rem;border-radius:6px;">📄 Synced with config.json</span>
+                </div>
+                <div style="padding:1.5rem;">
+                    <form action="/admin/settings" method="POST" class="settings-form" enctype="multipart/form-data">
+                        <!-- Price -->
+                        <div class="settings-field-group">
+                            <label class="settings-label">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                Price (RS/PKR)
+                            </label>
+                            <input type="number" name="price" value="{{ settings.get('price', '650') }}" min="1" class="settings-input" placeholder="650">
+                            <p class="settings-hint">Order amount in PKR. Currently shown as "Confirm and Pay {price}RS" on result page.</p>
+                        </div>
+
+                        <!-- Admin Password -->
+                        <div class="settings-field-group">
+                            <label class="settings-label">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                Admin Password
+                            </label>
+                            <input type="password" name="admin_password" value="{{ settings.get('admin_password', 'admin2025') }}" minlength="6" class="settings-input" placeholder="Enter new admin password">
+                            <p class="settings-hint">Min 6 characters. Leave empty to keep current password.</p>
+                        </div>
+
+                        <!-- YouTube Tutorial Link -->
+                        <div class="settings-field-group">
+                            <label class="settings-label">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                YouTube Tutorial Video URL
+                            </label>
+                            <input type="url" name="payment_video_url" value="{{ settings.get('payment_video_url', '') }}" class="settings-input" placeholder="https://youtu.be/...">
+                            <p class="settings-hint">This URL opens when users click "پیمنٹ کیسے کریں" (How to Pay) button.</p>
+                        </div>
+
+                        <!-- Guild API URL -->
+                        <div class="settings-field-group">
+                            <label class="settings-label">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                                Guild Info API URL
+                            </label>
+                            <input type="url" name="guild_api_url" value="{{ settings.get('guild_api_url', 'https://guild-info-oa3v.onrender.com/info2') }}" class="settings-input" placeholder="https://api.example.com/info2">
+                            <p class="settings-hint">The external API endpoint for fetching clan info. ?clan_id=...&region=... will be appended.</p>
+                        </div>
+
+                        <!-- Till ID -->
+                        <div class="settings-field-group">
+                            <label class="settings-label">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="12" y1="10" x2="12" y2="14"/></svg>
+                                Till ID
+                            </label>
+                            <input type="text" name="till_id" value="{{ settings.get('till_id', '995865874') }}" class="settings-input" placeholder="e.g. 995865874">
+                            <p class="settings-hint">Easypaisa Till ID shown on the payment page. Users will see "Till ID: {value}".</p>
+                        </div>
+
+                        <!-- QR Image URL -->
+                        <div class="settings-field-group">
+                            <label class="settings-label">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                QR Code Photo
+                            </label>
+                            <!-- File Upload for QR -->
+                            <div style="margin-bottom:0.75rem;">
+                                <label class="qr-upload-label">
+                                    <input type="file" name="qr_photo_file" accept="image/jpeg,image/png,image/gif,image/webp" class="qr-file-input" id="qrFileInput" onchange="onQrFileSelected(this)">
+                                    <span class="qr-upload-btn">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                        Upload QR Photo
+                                    </span>
+                                    <span class="qr-file-name" id="qrFileName">No file chosen</span>
+                                </label>
+                            </div>
+                            <!-- Or enter URL -->
+                            <input type="url" name="qr_image_url" value="{{ settings.get('qr_image_url', '') }}" class="settings-input" placeholder="https://example.com/qr-code.jpg">
+                            <p class="settings-hint">Upload a QR photo file (recommended) OR enter a URL. Uploaded file will be saved in the project and config.json will be updated automatically.</p>
+                            <!-- QR Preview -->
+                            <div class="qr-preview-box" id="qrPreviewBox" style="margin-top:0.75rem; {% if not settings.get('qr_image_url', '') %}display:none;{% endif %}">
+                                <div class="qr-preview-label">Current QR:</div>
+                                <img id="qrPreviewImg" src="{% if settings.get('qr_image_url', '') %}{{ settings.get('qr_image_url', '') }}{% else %}{{ url_for('static', filename='images/qr_code.jpg') }}{% endif %}" alt="QR Preview" style="max-width:150px;max-height:150px;border-radius:8px;border:1px solid rgba(124,58,237,0.3);">
+                            </div>
+                        </div>
+
+                        <!-- Allowed Regions -->
+                        <div class="settings-field-group">
+                            <label class="settings-label">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                                Allowed Regions
+                            </label>
+                            <p class="settings-hint" style="margin-bottom:0.75rem;">Select which regions users can choose on their dashboard. Only checked regions will appear in the region dropdown.</p>
+                            <div class="region-checkboxes">
+                                {% for code, name in all_regions.items() %}
+                                <label class="region-checkbox-label">
+                                    <input type="checkbox" name="allowed_regions" value="{{ code }}" {% if code in allowed_regions %}checked{% endif %}>
+                                    <span class="region-checkbox-custom"></span>
+                                    <span class="region-checkbox-text">{{ name }}</span>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Guild Info Check Toggle -->
+                        <div class="settings-field-group">
+                            <label class="settings-label">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                Guild Info Check
+                            </label>
+                            <p class="settings-hint" style="margin-bottom:0.75rem;">When ON: "Launch Glory Session" will first fetch clan info from the API, then show result page with clan details before payment. When OFF: clicking "Launch Glory Session" will skip clan info check and go directly to the payment page.</p>
+                            <label class="toggle-switch-label">
+                                <input type="checkbox" name="guild_info_enabled" value="on" id="guildInfoToggle" {% if settings.get('guild_info_enabled', 'on') == 'on' %}checked{% endif %}>
+                                <span class="toggle-switch-track">
+                                    <span class="toggle-switch-thumb"></span>
+                                </span>
+                                <span class="toggle-switch-text" id="guildInfoToggleText">{{ 'Enabled — API check will run before payment' if settings.get('guild_info_enabled', 'on') == 'on' else 'Disabled — Direct to payment, no API check' }}</span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="settings-save-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Save All Settings
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ===== BOTTOM NAVIGATION ===== -->
+    <nav class="admin-bottom-nav">
+        <button class="admin-nav-btn active" onclick="switchTab('home')" id="nav-home">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Home</span>
+        </button>
+        <button class="admin-nav-btn" onclick="switchTab('orders')" id="nav-orders">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            <span>Orders</span>
+        </button>
+        <button class="admin-nav-btn" onclick="switchTab('settings')" id="nav-settings">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>Settings</span>
+        </button>
+    </nav>
+
+    <style>
+    /* ===== Toggle Switch ===== */
+    .toggle-switch-label {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer;
+        user-select: none;
+    }
+    .toggle-switch-label input[type="checkbox"] {
+        display: none;
+    }
+    .toggle-switch-track {
+        position: relative;
+        width: 52px;
+        height: 28px;
+        background: #374151;
+        border-radius: 14px;
+        transition: background 0.3s ease;
+        flex-shrink: 0;
+    }
+    .toggle-switch-track::after {
+        content: '';
+        display: block;
+    }
+    .toggle-switch-thumb {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 22px;
+        height: 22px;
+        background: #9ca3af;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+    .toggle-switch-label input:checked + .toggle-switch-track {
+        background: #7c3aed;
+    }
+    .toggle-switch-label input:checked + .toggle-switch-track .toggle-switch-thumb {
+        left: 27px;
+        background: #ffffff;
+        box-shadow: 0 0 8px rgba(124, 58, 237, 0.5);
+    }
+    .toggle-switch-text {
+        font-size: 0.85rem;
+        color: var(--text-gray, #94a3b8);
+        line-height: 1.4;
+    }
+    /* ===== QR Upload ===== */
+    .qr-upload-label {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer;
+    }
+    .qr-file-input {
+        display: none;
+    }
+    .qr-upload-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: rgba(124, 58, 237, 0.15);
+        border: 1px dashed rgba(124, 58, 237, 0.4);
+        color: #a78bfa;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    .qr-upload-btn:hover {
+        background: rgba(124, 58, 237, 0.25);
+        border-color: rgba(124, 58, 237, 0.6);
+    }
+    .qr-file-name {
+        font-size: 0.8rem;
+        color: var(--text-gray, #94a3b8);
+    }
+    .qr-preview-box {
+        background: rgba(26, 26, 46, 0.5);
+        border: 1px solid var(--border-color, rgba(124, 58, 237, 0.2));
+        border-radius: 10px;
+        padding: 0.75rem;
+        display: inline-flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .qr-preview-label {
+        font-size: 0.75rem;
+        color: var(--text-gray, #94a3b8);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    </style>
+
+    <script>
+    function switchTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.admin-tab-content').forEach(t => t.style.display = 'none');
+        // Deactivate all nav buttons
+        document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
+        // Deactivate all desktop tabs
+        document.querySelectorAll('.admin-desktop-tab').forEach(b => b.classList.remove('active'));
+        // Show selected tab
+        document.getElementById('tab-' + tabName).style.display = 'block';
+        // Activate selected nav button (mobile)
+        document.getElementById('nav-' + tabName).classList.add('active');
+        // Activate selected desktop tab
+        var dtab = document.getElementById('dtab-' + tabName);
+        if (dtab) dtab.classList.add('active');
+    }
+
+    // Guild info toggle text update
+    const guildToggle = document.getElementById('guildInfoToggle');
+    const guildToggleText = document.getElementById('guildInfoToggleText');
+    if (guildToggle) {
+        guildToggle.addEventListener('change', function() {
+            if (this.checked) {
+                guildToggleText.textContent = 'Enabled — API check will run before payment';
+            } else {
+                guildToggleText.textContent = 'Disabled — Direct to payment, no API check';
+            }
+        });
+    }
+
+    // QR file upload preview
+    function onQrFileSelected(input) {
+        const fileName = document.getElementById('qrFileName');
+        const previewBox = document.getElementById('qrPreviewBox');
+        const previewImg = document.getElementById('qrPreviewImg');
+        if (input.files && input.files[0]) {
+            fileName.textContent = input.files[0].name;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                previewBox.style.display = 'inline-flex';
+            };
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            fileName.textContent = 'No file chosen';
+        }
+    }
+
+    // Auto-remove flash messages
+    document.querySelectorAll('.toast').forEach(t => {
+        setTimeout(() => { if (t.parentElement) t.remove(); }, 5000);
+    });
+    </script>
+</body>
+</html>

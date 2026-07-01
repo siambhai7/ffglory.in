@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Status - GloryBot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body class="dashboard-body">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="dash-nav">
+        <div class="dash-nav-inner">
+            <a href="/" class="dash-logo">
+                <div class="logo-mark">⚡</div>
+                <span>GloryBot</span>
+            </a>
+            <div class="dash-nav-right">
+                <div class="dash-user-pill">
+                    <div class="dash-user-avatar">{{ user['username'][0]|upper }}</div>
+                    <span class="dash-user-name">{{ user['username'] }}</span>
+                </div>
+                <a href="/logout" class="dash-logout-btn" title="Logout">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== ORDER STATUS PAGE ===== -->
+    <main class="dash-main">
+        <div class="order-status-container">
+            <!-- Back link -->
+            <a href="/client" class="result-back">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                Back to Dashboard
+            </a>
+
+            <div class="order-status-card animate-in">
+                <div class="order-status-header">
+                    <div class="order-status-header-glow"></div>
+                    <div class="order-status-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </div>
+                    <h2>Order Status</h2>
+                    <p class="order-status-subtitle">Track your orders and payment verification</p>
+                </div>
+
+                {% if orders %}
+                <div class="orders-list">
+                    {% for order in orders %}
+                    <div class="order-item">
+                        <div class="order-item-top">
+                            <div class="order-item-id">#{{ order['id'] }}</div>
+                            <span class="status-badge status-{{ order['status'] }}">{{ order['status']|capitalize }}</span>
+                        </div>
+                        <div class="order-item-details">
+                            <div class="order-detail-row">
+                                <span class="order-detail-label">Clan</span>
+                                <span class="order-detail-value">{{ order['clan_name'] or order['clan_id'] }}</span>
+                            </div>
+                            <div class="order-detail-row">
+                                <span class="order-detail-label">Clan ID</span>
+                                <span class="order-detail-value" style="font-family:'JetBrains Mono',monospace;">{{ order['clan_id'] }}</span>
+                            </div>
+                            <div class="order-detail-row">
+                                <span class="order-detail-label">Region</span>
+                                <span class="order-detail-value">{{ region_display(order['region']) }}</span>
+                            </div>
+                            <div class="order-detail-row">
+                                <span class="order-detail-label">Transaction ID</span>
+                                <span class="order-detail-value" style="font-family:'JetBrains Mono',monospace;">{{ order['transaction_id'] }}</span>
+                            </div>
+                            <div class="order-detail-row">
+                                <span class="order-detail-label">Amount</span>
+                                <span class="order-detail-value">{{ order['amount'] }} RS</span>
+                            </div>
+                            <div class="order-detail-row">
+                                <span class="order-detail-label">Date</span>
+                                <span class="order-detail-value" style="font-size:0.78rem;">{{ order['created_at'][:19] }}</span>
+                            </div>
+                        </div>
+                        {% if order['status'] == 'pending' %}
+                        <div class="order-item-note">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            Payment verification in progress. Please wait while we confirm your transaction.
+                        </div>
+                        {% elif order['status'] == 'confirmed' %}
+                        <div class="order-item-note order-note-success">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            Payment verified! Your order has been confirmed and will be processed.
+                        </div>
+                        {% elif order['status'] == 'cancelled' %}
+                        <div class="order-item-note order-note-error">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                            Order was cancelled. Please contact support if you believe this is an error.
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="orders-empty">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.12;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <h3>No Orders Yet</h3>
+                    <p>You haven't placed any orders yet. Start by looking up a clan!</p>
+                    <a href="/client" class="pay-btn" style="width:auto;display:inline-flex;text-decoration:none;margin-top:0.5rem;">
+                        <span class="pay-btn-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                        </span>
+                        <span class="pay-btn-text">Go to Dashboard</span>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "price": "650",
+  "admin_password": "admin2025",
+  "payment_video_url": "https://youtu.be/PKbari5YGMs?si=wZ-UGtyZa5NYHo2c",
+  "guild_api_url": "https://guild-info-sigma-eight.vercel.app/info2",
+  "till_id": "995865874",
+  "qr_image_url": "",
+  "allowed_regions": "me,ind,bd,pk,br,sg",
+  "guild_info_enabled": "on"
+}

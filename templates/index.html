@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Free Fire Automated Clan Glory System</title>
+    <meta name="description" content="The most advanced Free Fire clan glory automation system. Boost your clan's ranking while you sleep.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar">
+        <a href="/" class="nav-logo">
+            <div class="logo-icon">⚡</div>
+            GloryBot
+        </a>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#testimonials">Reviews</a></li>
+            {% if current_user %}
+            <li><a href="/client" class="nav-btn">Dashboard ({{ current_user['username'] }})</a></li>
+            {% else %}
+            <li><a href="/login" class="nav-btn">Get Started</a></li>
+            {% endif %}
+            <li><button class="mobile-nav-close" onclick="closeMobileNav()" aria-label="Close menu">&times;</button></li>
+        </ul>
+        <button class="mobile-toggle" aria-label="Toggle menu" onclick="toggleMobileNav()">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero" id="hero">
+        <div class="particles"></div>
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="pulse"></span>
+                Live & Active — 50+ Users Online
+            </div>
+            <h1>Dominate Your <br><span>Clan Glory</span> Automatically</h1>
+            <p>The most advanced Free Fire clan glory automation system. Boost your clan's ranking while you sleep with our intelligent bot technology.</p>
+            <div class="hero-buttons">
+                {% if current_user %}
+                <a href="/client" class="btn-primary">🚀 Go to Dashboard</a>
+                {% else %}
+                <a href="/login" class="btn-primary">🚀 Get Started Now</a>
+                {% endif %}
+                <a href="#how-it-works" class="btn-secondary">📖 How It Works</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== STATS SECTION ===== -->
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card animate-on-scroll">
+                <div class="stat-number" data-count="40" data-suffix="M+">0</div>
+                <div class="stat-label">Glory Earned Daily</div>
+            </div>
+            <div class="stat-card animate-on-scroll">
+                <div class="stat-number" data-count="101" data-suffix="%">0</div>
+                <div class="stat-label">Uptime</div>
+            </div>
+            <div class="stat-card animate-on-scroll">
+                <div class="stat-number" data-count="50" data-suffix="+">0</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== LIVE STATS SECTION ===== -->
+    <section class="live-stats">
+        <div class="live-stats-header">
+            <h2>Live Glory Stats</h2>
+            <div class="live-indicator">
+                <span class="dot"></span>
+                Real-time monitoring
+            </div>
+        </div>
+        <div class="live-grid">
+            <div class="live-card animate-on-scroll">
+                <div class="live-label">Daily Progress</div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" data-width="78"></div>
+                </div>
+                <div class="live-value" data-live-glory style="margin-top:0.8rem;">+12 M Glory</div>
+            </div>
+            <div class="live-card animate-on-scroll">
+                <div class="live-value">4</div>
+                <div class="live-label">Bots Active</div>
+            </div>
+            <div class="live-card animate-on-scroll">
+                <div class="live-value">24/7</div>
+                <div class="live-label">Running</div>
+            </div>
+            <div class="live-card animate-on-scroll">
+                <div class="live-value">ME</div>
+                <div class="live-label">Region</div>
+                <div class="live-value" style="font-size:1.2rem; margin-top:0.3rem;">+200k Glory/Hour</div>
+                <div class="badge-safe">✓ 100% Safe</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FEATURES SECTION ===== -->
+    <section class="features-section" id="features">
+        <div class="section-header">
+            <span class="section-label">Features</span>
+            <h2>Why Choose Glory Bot?</h2>
+            <p>Experience the most powerful and reliable clan glory automation system built for serious players.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">🤖</div>
+                <h3>Smart Automation</h3>
+                <p>Our intelligent bots work 24/7 to maximize your clan glory earnings with optimized strategies and minimal resource usage.</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">📊</div>
+                <h3>Real-Time Dashboard</h3>
+                <p>Monitor your glory progress, bot status, and earnings in real-time through our intuitive web dashboard.</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">🌍</div>
+                <h3>Multi-Region Support</h3>
+                <p>Support for all major regions including Middle East, India, Bangladesh, and more. Play from anywhere in the world.</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">🔒</div>
+                <h3>Secure & Safe</h3>
+                <p>Advanced security measures ensure your account safety. We use encrypted connections and secure authentication.</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">💳</div>
+                <h3>Easy Payments</h3>
+                <p>Simple pay-per-order system. Submit your transaction ID and get your order confirmed quickly and securely.</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">💬</div>
+                <h3>24/7 Support</h3>
+                <p>Our dedicated support team is always ready to help you with any questions or issues you might encounter.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== HOW IT WORKS ===== -->
+    <section class="process-section" id="how-it-works">
+        <div class="section-header">
+            <span class="section-label">Process</span>
+            <h2>How It Works</h2>
+            <p>Get started with Glory Bot in just a few simple steps.</p>
+        </div>
+        <div class="process-grid">
+            <div class="process-card animate-on-scroll">
+                <div class="process-number">01</div>
+                <h3>Create Account</h3>
+                <p>Sign up for a free account and get access to your personal dashboard.</p>
+            </div>
+            <div class="process-card animate-on-scroll">
+                <div class="process-number">02</div>
+                <h3>Order Tracking</h3>
+                <p>Track all your orders in real-time. See the status of your last 5 orders right on your dashboard.</p>
+            </div>
+            <div class="process-card animate-on-scroll">
+                <div class="process-number">03</div>
+                <h3>Enter Clan ID</h3>
+                <p>Input your Free Fire clan ID and select your preferred region.</p>
+            </div>
+            <div class="process-card animate-on-scroll">
+                <div class="process-number">04</div>
+                <h3>Watch Glory Grow</h3>
+                <p>Sit back and watch as your clan glory increases automatically!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PRICING SECTION ===== -->
+    <section class="pricing-section" id="pricing">
+        <div class="section-header">
+            <span class="section-label">Pricing</span>
+            <h2>Simple Pricing</h2>
+            <p>Choose the plan that fits your needs. No hidden fees, cancel anytime.</p>
+        </div>
+        <div class="pricing-card animate-on-scroll card-glow">
+            <span class="pricing-popular">Most Popular</span>
+            <h3>Pro</h3>
+            <div class="pricing-amount">$20</div>
+            <div class="pricing-credits">Per Order</div>
+            <ul class="pricing-features">
+                <li><span class="check">✓</span> 3 Glory Sessions</li>
+                <li><span class="check">✓</span> Full Dashboard Access</li>
+                <li><span class="check">✓</span> Priority Support</li>
+                <li><span class="check">✓</span> 3 Active Groups</li>
+                <li><span class="check">✓</span> Auto-Refund Feature</li>
+            </ul>
+            {% if current_user %}
+            <a href="/client" class="btn-primary" style="width:100%;justify-content:center;padding:1rem;font-size:1.05rem;">Go to Dashboard</a>
+            {% else %}
+            <a href="/register" class="btn-primary" style="width:100%;justify-content:center;padding:1rem;font-size:1.05rem;">Get Started</a>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- ===== TESTIMONIALS ===== -->
+    <section class="testimonials-section" id="testimonials">
+        <div class="section-header">
+            <span class="section-label">Testimonials</span>
+            <h2>What Players Say</h2>
+            <p>Join thousands of satisfied clan leaders who trust Glory Bot.</p>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card animate-on-scroll">
+                <div class="testimonial-text">"Glory Bot completely changed our clan's ranking. We went from Top 100 to Top 10 in just two weeks. The automation is flawless!"</div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">AK</div>
+                    <div class="author-info">
+                        <h4>Ahmed K.</h4>
+                        <p>Clan Leader — Desert Storm</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card animate-on-scroll">
+                <div class="testimonial-text">"The order tracking is amazing. I can see all my order statuses right on the dashboard. Best customer service I've experienced!"</div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">RS</div>
+                    <div class="author-info">
+                        <h4>Raj S.</h4>
+                        <p>Clan Officer — Phoenix Rising</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card animate-on-scroll">
+                <div class="testimonial-text">"Easy to use, great dashboard, and consistent results. We've been using Glory Bot for 3 months now and couldn't be happier with the results."</div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">MH</div>
+                    <div class="author-info">
+                        <h4>Mohammed H.</h4>
+                        <p>Clan Leader — Night Wolves</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CTA SECTION ===== -->
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2>Ready to Dominate the Leaderboards?</h2>
+            <p>Join thousands of clan leaders who are already using Glory Bot to maximize their clan's potential.</p>
+            {% if current_user %}
+            <a href="/client" class="btn-primary">🔥 Go to Dashboard</a>
+            {% else %}
+            <a href="/register" class="btn-primary">🔥 Start Your Journey Now</a>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">⚡ GloryBot</div>
+            <div class="footer-links">
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#testimonials">Reviews</a>
+                {% if current_user %}
+                <a href="/client">Dashboard</a>
+                <a href="/logout" style="color:#ef4444;">Logout</a>
+                {% else %}
+                <a href="/login">Login</a>
+                {% endif %}
+            </div>
+            <div class="footer-copy">&copy; 2025 GloryBot. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

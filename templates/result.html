@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clan Info - GloryBot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body class="dashboard-body">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="dash-nav">
+        <div class="dash-nav-inner">
+            <a href="/" class="dash-logo">
+                <div class="logo-mark">⚡</div>
+                <span>GloryBot</span>
+            </a>
+            <div class="dash-nav-right">
+                <div class="dash-user-pill">
+                    <div class="dash-user-avatar">{{ user['username'][0]|upper }}</div>
+                    <span class="dash-user-name">{{ user['username'] }}</span>
+                </div>
+                <a href="/logout" class="dash-logout-btn" title="Logout">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== RESULT PAGE ===== -->
+    <main class="dash-main">
+        <div class="result-container" id="resultContainer">
+            <!-- Back button -->
+            <a href="/client" class="result-back">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                Back to Dashboard
+            </a>
+
+            <!-- No Data State -->
+            <div class="result-no-data" id="noDataState" style="display:none;">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.15;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <h3>No Clan Data Found</h3>
+                <p>Please go back and try again with a valid Clan ID.</p>
+                <a href="/client" class="launch-btn" style="width:auto;display:inline-flex;text-decoration:none;">
+                    <span class="launch-btn-content">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                        Try Again
+                    </span>
+                </a>
+            </div>
+
+            <!-- Clan Info Card - SIMPLIFIED -->
+            <div class="result-card" id="resultCard" style="display:none;">
+                <!-- Header -->
+                <div class="result-header">
+                    <div class="result-header-glow"></div>
+                    <div class="result-status-badge" id="statusBadge">
+                        <span class="live-dot"></span>
+                        Verified
+                    </div>
+                    <div class="result-clan-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <h1 class="result-clan-name" id="clanName">—</h1>
+                    <div class="result-clan-id" id="clanIdBadge">ID: —</div>
+                </div>
+
+                <!-- Info Grid - Only 3 items: Region, Level, Welcome -->
+                <div class="result-grid result-grid-simple">
+                    <!-- Region -->
+                    <div class="result-item result-item-highlight" style="--accent: #7c3aed;">
+                        <div class="result-item-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        </div>
+                        <div class="result-item-content">
+                            <div class="result-item-label">Region</div>
+                            <div class="result-item-value" id="regionValue">—</div>
+                        </div>
+                    </div>
+
+                    <!-- Level -->
+                    <div class="result-item result-item-highlight" style="--accent: #2563eb;">
+                        <div class="result-item-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        </div>
+                        <div class="result-item-content">
+                            <div class="result-item-label">Level</div>
+                            <div class="result-item-value" id="levelValue">—</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Welcome Message -->
+                <div class="result-welcome" id="welcomeSection" style="display:none;">
+                    <div class="result-welcome-icon">💬</div>
+                    <div>
+                        <div class="result-item-label" style="margin-bottom:0.3rem;">Welcome Message</div>
+                        <div class="result-welcome-text" id="welcomeText">—</div>
+                    </div>
+                </div>
+
+                <!-- PAYMENT BUTTON -->
+                <div class="result-actions" style="margin-top:1.5rem;">
+                    <button class="pay-btn" id="payBtn" onclick="goToPayment()">
+                        <span class="pay-btn-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                        </span>
+                        <span class="pay-btn-text">Confirm and Pay {{ price }}RS/PKR</span>
+                    </button>
+                    <!-- How to Pay Button (Urdu) -->
+                    <a href="{{ payment_video_url }}" target="_blank" rel="noopener" class="how-to-pay-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        <span>پیمنٹ کیسے کریں</span>
+                    </a>
+                </div>
+
+                <!-- Back link -->
+                <div style="text-align:center; margin-top:1rem;">
+                    <a href="/client" class="result-back" style="font-size:0.82rem;">← Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+    // ===== LOAD CLAN DATA FROM SESSION STORAGE =====
+    let clanData = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const dataStr = sessionStorage.getItem('clanData');
+        
+        if (!dataStr) {
+            document.getElementById('noDataState').style.display = 'flex';
+            return;
+        }
+
+        try {
+            const data = JSON.parse(dataStr);
+            
+            if (data.status !== 'success') {
+                document.getElementById('noDataState').style.display = 'flex';
+                return;
+            }
+
+            // Store for payment page use
+            clanData = data;
+
+            // Show the result card
+            document.getElementById('resultCard').style.display = 'block';
+            document.getElementById('resultCard').classList.add('animate-in');
+
+            // Fill in data
+            document.getElementById('clanName').textContent = data.clan_name || 'Unknown';
+            document.getElementById('clanIdBadge').textContent = 'ID: ' + (data.clan_id || '—');
+
+            // Region with flag
+            const regionFlags = {
+                'me': '🇸🇦 Middle East',
+                'ind': '🇮🇳 India',
+                'bd': '🇧🇩 Bangladesh',
+                'pk': '🇵🇰 Pakistan',
+                'br': '🇧🇷 Brazil',
+                'sg': '🇸🇬 Singapore'
+            };
+            const regionKey = (data.region || '').toLowerCase();
+            document.getElementById('regionValue').textContent = regionFlags[regionKey] || data.region || '—';
+            
+            document.getElementById('levelValue').textContent = data.level !== undefined ? data.level : '—';
+
+            // Welcome message
+            if (data.welcome_message) {
+                document.getElementById('welcomeSection').style.display = 'flex';
+                document.getElementById('welcomeText').textContent = data.welcome_message;
+            }
+
+            // Keep data in sessionStorage for payment page (don't clear yet)
+
+        } catch(e) {
+            document.getElementById('noDataState').style.display = 'flex';
+        }
+    });
+
+    function goToPayment() {
+        if (!clanData) return;
+        const clanId = clanData.clan_id || '';
+        const region = clanData.region || '';
+        const clanName = encodeURIComponent(clanData.clan_name || '');
+        window.location.href = '/payment?clan_id=' + clanId + '&region=' + region + '&clan_name=' + clanName;
+    }
+    </script>
+</body>
+</html>
